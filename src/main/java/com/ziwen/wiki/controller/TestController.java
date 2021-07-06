@@ -1,9 +1,17 @@
 package com.ziwen.wiki.controller;
 
-import org.springframework.web.bind.annotation.*;
+import com.ziwen.wiki.domain.Test;
+import com.ziwen.wiki.service.TestService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 public class TestController {
+    @Resource
+    private TestService testService;
 
     /**
      * GET, POST, PUT, DELETE
@@ -20,5 +28,10 @@ public class TestController {
     @GetMapping("/hello")
     public String hello() {
         return "Hello World!";
+    }
+
+    @GetMapping("/test/list")
+    public List<Test> list() {
+        return testService.list();
     }
 }
