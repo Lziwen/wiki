@@ -1,6 +1,7 @@
 package com.ziwen.wiki.controller;
 
 import com.ziwen.wiki.domain.Ebook;
+import com.ziwen.wiki.resp.CommonResp;
 import com.ziwen.wiki.service.EbookService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,10 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/list1")
-    public List<Ebook> list() {
-        return ebookService.list();
+    public CommonResp list() {
+        CommonResp<List<Ebook>> resp = new CommonResp<>();
+        List<Ebook> list = ebookService.list();
+        resp.setContent(list);
+        return resp;
     }
 }
