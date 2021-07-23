@@ -5,8 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.ziwen.wiki.domain.Ebook;
 import com.ziwen.wiki.domain.EbookExample;
 import com.ziwen.wiki.mapper.EbookMapper;
-import com.ziwen.wiki.req.EbookReq;
-import com.ziwen.wiki.resp.EbookResp;
+import com.ziwen.wiki.req.EbookQueryReq;
+import com.ziwen.wiki.req.EbookSaveReq;
+import com.ziwen.wiki.resp.EbookQueryResp;
 import com.ziwen.wiki.resp.PageResp;
 import com.ziwen.wiki.util.CopyUtil;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public PageResp<EbookResp> list(EbookReq req) {
+    public PageResp<EbookQueryResp> list(EbookQueryReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if (!ObjectUtils.isEmpty(req.getName())) {
@@ -45,11 +46,25 @@ public class EbookService {
 //        }
 
         // 列表复制
-        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
+        List<EbookQueryResp> list = CopyUtil.copyList(ebookList, EbookQueryResp.class);
 
-        PageResp<EbookResp> pageResp = new PageResp<>();
+        PageResp<EbookQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(list);
         return pageResp;
+    }
+
+    /**
+     * Save
+     */
+    public void save(EbookSaveReq req) {
+        Ebook ebook = CopyUtil.copy(req, Ebook.class);
+        if (ObjectUtils.isEmpty(req.getId())) {
+            // add
+            ebookMapper.insert(ebook);
+        } else {
+            // update
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
     }
 }
