@@ -16,7 +16,7 @@
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
-            <a-button type="primary">
+            <a-button type="primary" @click="edit">
               Edit
             </a-button>
             <a-button type="danger">
@@ -27,6 +27,14 @@
       </a-table>
     </a-layout-content>
   </a-layout>
+  <a-modal
+      title="Ebook List"
+      v-model:visible="modalVisible"
+      :confirm-loading="modalLoading"
+      @ok="handleModalOk"
+  >
+    <p>test</p>
+  </a-modal>
 </template>
 
 <script lang="ts">
@@ -83,7 +91,7 @@ export default defineComponent({
     ];
 
     /**
-     * 数据查询
+     * data query
      **/
     const handleQuery = (params: any) => {
       loading.value = true;
@@ -104,14 +112,31 @@ export default defineComponent({
     };
 
     /**
-     * 表格点击页码时触发
+     * Triggered when clicked
      */
     const handleTableChange = (pagination: any) => {
-      console.log("看看自带的分页参数都有啥：" + pagination);
+      console.log("params for pagination：" + pagination);
       handleQuery({
         page: pagination.current,
         size: pagination.pageSize
       });
+    };
+    // -------- List ---------
+    const modalVisible = ref(false);
+    const modalLoading = ref(false);
+    const handleModalOk = () => {
+      modalLoading.value = true;
+      setTimeout(() => {
+        modalVisible.value = false;
+        modalLoading.value = false;
+      }, 2000);
+    };
+
+    /**
+     * Edit
+     */
+    const edit = () => {
+      modalVisible.value = true;
     };
 
     onMounted(() => {
@@ -126,7 +151,13 @@ export default defineComponent({
       pagination,
       columns,
       loading,
-      handleTableChange
+      handleTableChange,
+
+      edit,
+
+      modalVisible,
+      modalLoading,
+      handleModalOk
     }
   }
 });
