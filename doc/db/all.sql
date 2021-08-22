@@ -36,3 +36,28 @@ create table `demo` (
 
 insert into `demo` (id, name) values (1, 'test');
 
+# 分类
+drop table if exists `category`;
+create table `category` (
+                            `id` bigint not null comment 'id',
+                            `parent` bigint not null default 0 comment 'parent id',
+                            `name` varchar(50) not null comment 'name',
+                            `sort` int comment 'order',
+                            primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='category';
+
+insert into `category` (id, parent, name, sort) values (100, 000, 'cat 1', 100);
+insert into `category` (id, parent, name, sort) values (101, 100, 'cat 1-1', 101);
+insert into `category` (id, parent, name, sort) values (102, 100, 'cat 1-2', 102);
+insert into `category` (id, parent, name, sort) values (200, 000, 'cat 2', 200);
+insert into `category` (id, parent, name, sort) values (201, 200, 'cat 2-1', 201);
+insert into `category` (id, parent, name, sort) values (202, 200, 'cat 2-2', 202);
+insert into `category` (id, parent, name, sort) values (300, 000, 'cat 3', 300);
+insert into `category` (id, parent, name, sort) values (301, 300, 'cat 3-1', 301);
+insert into `category` (id, parent, name, sort) values (302, 300, 'cat 3-2', 302);
+insert into `category` (id, parent, name, sort) values (400, 000, 'cat 4', 400);
+insert into `category` (id, parent, name, sort) values (401, 400, 'cat 4-1', 401);
+insert into `category` (id, parent, name, sort) values (500, 000, 'cat 5', 500);
+insert into `category` (id, parent, name, sort) values (501, 500, 'cat 5-1', 501);
+insert into `category` (id, parent, name, sort) values (502, 500, 'cat 5-2', 502);
+insert into `category` (id, parent, name, sort) values (503, 500, 'cat 5-3', 503);
