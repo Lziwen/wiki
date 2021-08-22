@@ -1,6 +1,9 @@
 package com.ziwen.wiki.resp;
 
+//import com.alibaba.fastjson.serializer.ToStringSerializer;
+
 public class EbookQueryResp {
+    //@JsonSerialize(using= ToStringSerializer.class)
     private Long id;
 
     private String name;
