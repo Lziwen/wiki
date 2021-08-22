@@ -1,8 +1,14 @@
 package com.ziwen.wiki.req;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+
 public class PageReq {
+    @NotNull(message = "page size cannot be null")
     private int page;
 
+    @NotNull(message = "page size cannot be null")
+    @Max(value = 1000, message = "maximum page size cannot exceed 1000")
     private int size;
 
     public int getPage() {
