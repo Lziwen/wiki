@@ -6,12 +6,8 @@
       <p>
         <a-form layout="inline" :model="param">
           <a-form-item>
-            <a-input v-model:value="param.name" placeholder="name">
-            </a-input>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" @click="handleQuery({page: 1, size: pagination.pageSize})">
-              Search
+            <a-button type="primary" @click="handleQuery()">
+              Refresh
             </a-button>
           </a-form-item>
           <a-form-item>
@@ -25,9 +21,8 @@
           :columns="columns"
           :row-key="record => record.id"
           :data-source="categorys"
-          :pagination="pagination"
           :loading="loading"
-          @change="handleTableChange"
+          :pagination="false"
       >
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar" />
@@ -84,11 +79,6 @@ export default defineComponent({
     const param = ref();
     param.value = {};
     const categorys = ref();
-    const pagination = ref({
-      current: 1,
-      pageSize: 10,
-      total: 0
-    });
     const loading = ref(false);
 
     const columns = [
@@ -116,39 +106,20 @@ export default defineComponent({
     /**
      * data query
      **/
-    const handleQuery = (params: any) => {
+    const handleQuery = () => {
       loading.value = true;
-      axios.get("/category/list", {
-        params: {
-          page: params.page,
-          size: params.size,
-          name: param.value.name
-        }
-      }).then((response) => {
+      axios.get("/category/all").then((response) => {
         loading.value = false;
         const data = response.data;
         if (data.success) {
-          categorys.value = data.content.list;
+          categorys.value = data.content;
 
-          // Reset Pagination
-          pagination.value.current = params.page;
-          pagination.value.total = data.content.total;
         } else {
           message.error(data.message);
         }
       });
     };
 
-    /**
-     * Triggered when clicked
-     */
-    const handleTableChange = (pagination: any) => {
-      console.log("params for pagination：" + pagination);
-      handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize
-      });
-    };
     // -------- List ---------
     const category = ref({});
     const modalVisible = ref(false);
@@ -162,10 +133,7 @@ export default defineComponent({
           modalVisible.value = false;
 
           //Reload
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
+          handleQuery();
         } else {
           message.error(data.message);
         }
@@ -193,28 +161,20 @@ export default defineComponent({
         const data = response.data; // data = commonResp
         if (data.success) {
           // 重新加载列表
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
+          handleQuery();
         }
       });
     };
 
     onMounted(() => {
-      handleQuery({
-        page : 1,
-        size : pagination.value.pageSize
-      });
+      handleQuery();
     });
 
     return {
       param,
       categorys,
-      pagination,
       columns,
       loading,
-      handleTableChange,
       handleQuery,
 
       edit,
