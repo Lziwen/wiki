@@ -7,10 +7,8 @@
           @click="handleClick"
       >
         <a-menu-item key="welcome">
-          <router-link :to="'/'">
-            <MailOutlined />
-            <span>Welcome</span>
-          </router-link>
+          <MailOutlined />
+          <span>Welcome</span>
         </a-menu-item>
         <a-sub-menu v-for="item in level1" :key="item.id">
           <template v-slot:title>
@@ -25,7 +23,10 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>Welcome to my wiki!</h1>
+      </div>
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
             <template #actions>
@@ -75,7 +76,7 @@ export default defineComponent({
     const level1 =  ref();
     let categorys: any;
     /**
-     * 查询所有分类
+     * enquire all categories
      **/
     const handleQueryCategory = () => {
       axios.get("/category/all").then((response) => {
@@ -93,22 +94,38 @@ export default defineComponent({
       });
     };
 
-    const handleClick = () => {
-      console.log("menu click")
-    };
+    const isShowWelcome = ref(true);
+    let categoryId2 = 0;
 
-    onMounted(() => {
-      handleQueryCategory();
+    const handleQueryEbook = () => {
       axios.get("/ebook/list", {
         params: {
           page: 1,
-          size: 1000
+          size: 1000,
+          categoryId2: categoryId2
         }
       }).then((response) => {
         const data = response.data;
         ebooks.value = data.content.list;
         // ebooks1.books = data.content;
       });
+    };
+
+    const handleClick = (value: any) => {
+      // console.log("menu click", value)
+      if (value.key === 'welcome') {
+        isShowWelcome.value = true;
+      } else {
+        categoryId2 = value.key;
+        isShowWelcome.value = false;
+        handleQueryEbook();
+      }
+      // isShowWelcome.value = value.key === 'welcome';
+    };
+
+    onMounted(() => {
+      handleQueryCategory();
+      // handleQueryEbook();
     });
 
     return {
@@ -128,6 +145,7 @@ export default defineComponent({
       ],
       handleClick,
       level1,
+      isShowWelcome
     }
   }
 });
