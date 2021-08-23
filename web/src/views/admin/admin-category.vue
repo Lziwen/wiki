@@ -24,7 +24,7 @@
       <a-table
           :columns="columns"
           :row-key="record => record.id"
-          :data-source="ebooks"
+          :data-source="categorys"
           :pagination="pagination"
           :loading="loading"
           @change="handleTableChange"
@@ -53,26 +53,20 @@
     </a-layout-content>
   </a-layout>
   <a-modal
-      title="Ebook List"
+      title="Category List"
       v-model:visible="modalVisible"
       :confirm-loading="modalLoading"
       @ok="handleModalOk"
   >
-    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-      <a-form-item label="cover">
-        <a-input v-model:value="ebook.cover" />
-      </a-form-item>
+    <a-form :model="category" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
       <a-form-item label="name">
-        <a-input v-model:value="ebook.name" />
+        <a-input v-model:value="category.name" />
       </a-form-item>
-      <a-form-item label="Category 1">
-        <a-input v-model:value="ebook.category1Id" />
+      <a-form-item label="parent">
+        <a-input v-model:value="category.parent" />
       </a-form-item>
-      <a-form-item label="Category 2">
-        <a-input v-model:value="ebook.category2Id" />
-      </a-form-item>
-      <a-form-item label="Description">
-        <a-input v-model:value="ebook.description" type="textarea" />
+      <a-form-item label="sort">
+        <a-input v-model:value="category.sort" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -85,11 +79,11 @@ import { message } from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 
 export default defineComponent({
-  name: 'AdminEbook',
+  name: 'AdminCategory',
   setup() {
     const param = ref();
     param.value = {};
-    const ebooks = ref();
+    const categorys = ref();
     const pagination = ref({
       current: 1,
       pageSize: 10,
@@ -99,34 +93,17 @@ export default defineComponent({
 
     const columns = [
       {
-        title: 'Cover',
-        dataIndex: 'cover',
-        slots: { customRender: 'cover' }
-      },
-      {
-        title: 'Name',
+        title: 'name',
         dataIndex: 'name'
       },
       {
-        title: 'Category 1',
-        key: 'category1Id',
-        dataIndex: 'category1Id'
+        title: 'parent',
+        key: 'parent',
+        dataIndex: 'parent'
       },
       {
-        title: 'Category 2',
-        dataIndex: 'category2Id'
-      },
-      {
-        title: 'Docs Count',
-        dataIndex: 'docCount'
-      },
-      {
-        title: 'Views Count',
-        dataIndex: 'viewCount'
-      },
-      {
-        title: 'Upvotes Count',
-        dataIndex: 'voteCount'
+        title: 'sort',
+        dataIndex: 'sort'
       },
       {
         title: 'Action',
@@ -141,7 +118,7 @@ export default defineComponent({
      **/
     const handleQuery = (params: any) => {
       loading.value = true;
-      axios.get("/ebook/list", {
+      axios.get("/category/list", {
         params: {
           page: params.page,
           size: params.size,
@@ -151,7 +128,7 @@ export default defineComponent({
         loading.value = false;
         const data = response.data;
         if (data.success) {
-          ebooks.value = data.content.list;
+          categorys.value = data.content.list;
 
           // Reset Pagination
           pagination.value.current = params.page;
@@ -173,12 +150,12 @@ export default defineComponent({
       });
     };
     // -------- List ---------
-    const ebook = ref({});
+    const category = ref({});
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
-      axios.post("/ebook/save", ebook.value).then((response) => {
+      axios.post("/category/save", category.value).then((response) => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
         if (data.success) {
@@ -200,7 +177,7 @@ export default defineComponent({
      */
     const edit = (record: any) => {
       modalVisible.value = true;
-      ebook.value = Tool.copy(record);
+      category.value = Tool.copy(record);
     };
 
     /**
@@ -208,14 +185,14 @@ export default defineComponent({
      */
     const add = () => {
       modalVisible.value = true;
-      ebook.value = {};
+      category.value = {};
     };
 
     const handleDelete = (id: number) => {
-      axios.delete("/ebook/delete/" + id).then((response) => {
+      axios.delete("/category/delete/" + id).then((response) => {
         const data = response.data; // data = commonResp
         if (data.success) {
-          // Reload
+          // 重新加载列表
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize,
@@ -233,7 +210,7 @@ export default defineComponent({
 
     return {
       param,
-      ebooks,
+      categorys,
       pagination,
       columns,
       loading,
@@ -243,7 +220,7 @@ export default defineComponent({
       edit,
       add,
 
-      ebook,
+      category,
       modalVisible,
       modalLoading,
       handleModalOk,
