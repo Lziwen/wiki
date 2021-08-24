@@ -34,9 +34,9 @@
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
-            <router-link to="/admin/doc">
+            <router-link :to="'/admin/doc?ebookId=' + record.id">
               <a-button type="primary" @click="edit(record)">
-                Manage Documents
+                Manage Docs
               </a-button>
             </router-link>
             <a-button type="primary" @click="edit(record)">
