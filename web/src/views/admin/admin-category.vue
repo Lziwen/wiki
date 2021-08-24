@@ -133,6 +133,8 @@ export default defineComponent({
       loading.value = true;
       axios.get("/category/all").then((response) => {
         loading.value = false;
+        // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
+        level1.value = [];
         const data = response.data;
         if (data.success) {
           categorys.value = data.content;
