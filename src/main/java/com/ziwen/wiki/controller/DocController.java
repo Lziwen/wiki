@@ -2,14 +2,15 @@ package com.ziwen.wiki.controller;
 
 import com.ziwen.wiki.req.DocQueryReq;
 import com.ziwen.wiki.req.DocSaveReq;
-import com.ziwen.wiki.resp.DocQueryResp;
 import com.ziwen.wiki.resp.CommonResp;
+import com.ziwen.wiki.resp.DocQueryResp;
 import com.ziwen.wiki.resp.PageResp;
 import com.ziwen.wiki.service.DocService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -41,10 +42,11 @@ public class DocController {
         return resp;
     }
 
-    @DeleteMapping("/delete/{id}")
-    public CommonResp list(@PathVariable Long id) {
+    @DeleteMapping("/delete/{idsStr}")
+    public CommonResp delete(@PathVariable String idsStr) {
         CommonResp resp = new CommonResp<>();
-        docService.delete(id);
+        List<String> list = Arrays.asList(idsStr.split(","));
+        docService.delete(list);
         return resp;
     }
 
