@@ -72,6 +72,9 @@
       <a-form-item label="sort">
         <a-input v-model:value="doc.sort" />
       </a-form-item>
+      <a-form-item label="content">
+        <div id="content"></div>
+      </a-form-item>
     </a-form>
   </a-modal>
 </template>
@@ -83,7 +86,7 @@ import {message, Modal} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
 import ExclamationCircleOutlined from "@ant-design/icons-vue/ExclamationCircleOutlined";
-
+import E from 'wangeditor'
 
 export default defineComponent({
   name: 'AdminDoc',
@@ -167,6 +170,8 @@ export default defineComponent({
     const doc = ref({});
     const modalVisible = ref(false);
     const modalLoading = ref(false);
+    const editor = new E('#content');
+
     const handleModalOk = () => {
       modalLoading.value = true;
       axios.post("/doc/save", doc.value).then((response) => {
@@ -255,7 +260,9 @@ export default defineComponent({
       setDisable(treeSelectData.value, record.id);
 
       treeSelectData.value.unshift({id: 0, name: 'N.A.'});
-
+      setTimeout(function () {
+        editor.create();
+      }, 100);
     };
 
     /**
@@ -269,7 +276,9 @@ export default defineComponent({
       treeSelectData.value = Tool.copy(level1.value);
 
       treeSelectData.value.unshift({id: 0, name: 'N.A.'});
-
+      setTimeout(function () {
+        editor.create();
+      }, 100);
     };
 
     const handleDelete = (id: number) => {
