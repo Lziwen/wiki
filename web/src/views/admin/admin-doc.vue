@@ -54,7 +54,7 @@
             <a-form layout="inline" :model="param">
               <a-form-item>
                 <a-button type="primary" @click="handleSave()">
-                  保存
+                  Save
                 </a-button>
               </a-form-item>
             </a-form>
@@ -192,8 +192,8 @@ export default defineComponent({
         modalLoading.value = false;
         const data = response.data; // data = commonResp
         if (data.success) {
-          modalVisible.value = false;
-
+          // modalVisible.value = false;
+          message.success("Successfully saved!");
           //Reload
           handleQuery();
         } else {
@@ -264,12 +264,28 @@ export default defineComponent({
     };
 
     /**
+     * Query Content
+     **/
+    const handleQueryContent = () => {
+      axios.get("/doc/find-content/" + doc.value.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          editor.txt.html(data.content)
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    /**
      * Edit
      */
     const edit = (record: any) => {
+      //clear rich text
+      editor.txt.html("");
       modalVisible.value = true;
       doc.value = Tool.copy(record);
-
+      handleQueryContent();
       treeSelectData.value = Tool.copy(level1.value);
       setDisable(treeSelectData.value, record.id);
 
@@ -280,6 +296,8 @@ export default defineComponent({
      * add
      */
     const add = () => {
+      //clear rich text
+      editor.txt.html("");
       modalVisible.value = true;
       doc.value = {
         ebookId: route.query.ebookId
